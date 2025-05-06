@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "deno.ns",
+      "dom"
+    ]
+  },
+  "tasks": {
+    "start": "deno run server.ts"
+  },
+  "deploy": {
+    "project": "3dbd5cde-277c-424d-8d0a-4efd6764d309",
+    "exclude": [
+      "**/node_modules"
+    ],
+    "include": [],
+    "entrypoint": "server.ts"
+  }
+}
