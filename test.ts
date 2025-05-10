@@ -1,0 +1,10 @@
+import { fetchFr } from "./functions/fr/fetch-fr.ts";
+import { fetchMinorKline } from "./functions/kline/fetch-minor-kline.ts";
+import { fetchMinorOi } from "./functions/oi/fetch-minor-oi.ts";
+import { initializeServantsOperators } from "./grant-utils/functions/initialize-servants-operators.ts";
+import { TF } from "./grant-utils/models/timeframes.ts";
+await initializeServantsOperators();
+console.time("FUCK");
+const data = await fetchFr(4, 4);
+console.timeEnd("FUCK");
+console.log(data.length);

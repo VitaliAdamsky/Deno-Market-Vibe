@@ -1,85 +1,26 @@
-import express from "npm:express";
-import { load } from "https://deno.land/std@0.223.0/dotenv/mod.ts";
+import initializeApp from "./app/initialize-app.ts";
+import { initializeServantsOperators } from "./grant-utils/functions/initialize-servants-operators.ts";
+import { DColors } from "./grant-utils/servants/models/colors.ts";
+import { logger } from "./grant-utils/servants/operators/logger.ts";
+import { ServantsConfigOperator } from "./grant-utils/servants/operators/servants-config-operator.ts";
 
-import { OpenInterestDataRepo } from "./global/oi-data-repo.ts";
-import { TF } from "./models/timeframes.ts";
-import { KlineDataRepo } from "./global/kline-data-repo.ts";
-import { FundingRateDataRepo } from "./global/fr-data-repo.ts";
-
-const env = await load();
-
-const app = express();
-const PORT = env.PORT || 80;
-
-// First, do all async initializations
-async function bootstrap() {
+async function initializeApplication() {
   try {
-    await KlineDataRepo.initialize({
-      [TF.h1]: env["KLINE_1H_URL"],
-      [TF.h4]: env["KLINE_4H_URL"],
-      [TF.D]: env["KLINE_D_URL"],
+    await initializeServantsOperators();
+    const config = ServantsConfigOperator.getConfig();
+    const app = await initializeApp(config);
+
+    app.listen({ port: 80 }, "0.0.0.0", () => {
+      logger.success("Server --> started...", DColors.green);
+      // cron1hJob();
+      // cron2hJob();
+      // cron4hJob();
+      // cronDJob();
     });
-
-    await OpenInterestDataRepo.initialize({
-      [TF.h1]: env["OI_1H_URL"],
-      [TF.h4]: env["OI_4H_URL"],
-      [TF.D]: env["OI_D_URL"],
-    });
-
-    await FundingRateDataRepo.initialize(env["FR_URL"]);
-
-    // ✅ GET endpoint to fetch Kline data for a given timeframe
-    app.get("/kline/:timeframe", (req: any, res: any) => {
-      const tfParam = req.params.timeframe;
-
-      // Map string param to enum value
-      const timeframe = TF[tfParam as keyof typeof TF];
-      if (!timeframe || !Object.values(TF).includes(timeframe)) {
-        return res.status(400).json({ error: "Invalid timeframe" });
-      }
-
-      try {
-        const data = KlineDataRepo.getData(timeframe);
-        res.json(data);
-      } catch (err) {
-        res.status(500).json({ error: err });
-      }
-    });
-
-    app.get("/oi/:timeframe", (req: any, res: any) => {
-      const tfParam = req.params.timeframe;
-
-      // Map string param to enum value
-      const timeframe = TF[tfParam as keyof typeof TF];
-      if (!timeframe || !Object.values(TF).includes(timeframe)) {
-        return res.status(400).json({ error: "Invalid timeframe" });
-      }
-
-      try {
-        const data = OpenInterestDataRepo.getData(timeframe);
-        res.json(data);
-      } catch (err) {
-        res.status(500).json({ error: err });
-      }
-    });
-
-    app.get("/fr", (req: any, res: any) => {
-      try {
-        const data = FundingRateDataRepo.getData();
-        res.json(data);
-      } catch (err) {
-        res.status(500).json({ error: err });
-      }
-    });
-
-    // Then start the server
-    app.listen(PORT, () => {
-      console.log(`Server is running at http://localhost:${PORT}`);
-    });
-  } catch (err) {
-    console.error("Failed to initialize app:", err);
-    Deno.exit(1); // Ensure you stop app startup on failure
+  } catch (error) {
+    logger.error("Application initialization failed:", error);
+    Deno.exit(1);
   }
 }
 
-bootstrap();
+initializeApplication();

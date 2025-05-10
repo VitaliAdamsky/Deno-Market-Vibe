@@ -1,10 +1,8 @@
-import { KlineData } from "./kline-data.ts";
-import { TF } from "./timeframes.ts";
-import { OpenInterestData } from "./oi-data.ts";
-import { FundingRateData } from "./fr-data.ts";
-
+import { FundingRateData } from "./fr.ts";
+import { KlineData } from "./kline.ts";
+import { OpentInterestData } from "./oi.ts";
 export interface MarketData {
-  timeframe: TF;
+  timeframe: string;
   expirationTime: number;
-  data: KlineData[] | OpenInterestData[] | FundingRateData[];
+  data: FundingRateData[] | KlineData[] | OpentInterestData[];
 }
