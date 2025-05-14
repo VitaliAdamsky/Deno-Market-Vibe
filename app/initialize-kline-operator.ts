@@ -1,9 +1,9 @@
-import { OpenInterestDataStore } from "../global/open-interest-data-store.ts";
+import { KlineDataStore } from "../global/kline-data-store.ts";
 import { logger } from "../grant-utils/servants/operators/logger.ts";
 
-export async function initializeOpenInterestStore() {
+export async function initializeKlineDataStore() {
   try {
-    await OpenInterestDataStore.initialize();
+    await KlineDataStore.initialize();
   } catch (error) {
     logger.error("Failed to initialize OpenInterestDataRepo:", error);
     throw error;

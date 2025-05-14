@@ -2,6 +2,9 @@ import express, { Application } from "npm:express@4.18.2";
 import cors from "npm:cors";
 
 import { ServantsConfig } from "../grant-utils/servants/models/servants-config.ts";
+import klineRoutes from "../routes/kline.route.ts";
+import errorsRoutes from "../routes/errors.route.ts";
+import generalRoutes from "../routes/general.route.ts";
 
 const initializeApp = (config: ServantsConfig) => {
   const allowedOrigins = config.allowedOrigins;
@@ -17,9 +20,9 @@ const initializeApp = (config: ServantsConfig) => {
     })
   );
 
-  // app.use("/api", oiRoutes);
-  // app.use("/api", errorsRoutes);
-  // app.use("/api", generalRoutes);
+  app.use("/api", klineRoutes);
+  app.use("/api", errorsRoutes);
+  app.use("/api", generalRoutes);
 
   return app;
 };

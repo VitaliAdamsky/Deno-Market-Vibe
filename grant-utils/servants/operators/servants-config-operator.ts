@@ -52,7 +52,7 @@ export class ServantsConfigOperator {
         mongoDb: secrets["MONGO_DB"] || "",
         proxyMarketVibe: secrets["PROXY_MARKET_VIBE"] || "",
         projectName: "Deno-Market-Vibe",
-        delayInMinutesShort: 5,
+        delayInMinutesShort: 0,
         delayInMinutesLong: 10,
       };
 
